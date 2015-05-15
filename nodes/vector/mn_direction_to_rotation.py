@@ -4,14 +4,15 @@ from mathutils import *
 from ... mn_node_base import AnimationNode
 from ... mn_execution import nodePropertyChanged, nodeTreeChanged, allowCompiling, forbidCompiling
 
-items = [("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", "")]
+trackItems = [("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", ""),("-X", "-X", ""), ("-Y", "-Y", ""), ("-Z", "-Z", "")]
+upItems = [("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", "")]
 
 class mn_DirectionToRotation(Node, AnimationNode):
     bl_idname = "mn_DirectionToRotation"
     bl_label = "Direction to Rotation"
     
-    trackAxis = bpy.props.EnumProperty(items = items, update = nodeTreeChanged, default = "Z")
-    upAxis = bpy.props.EnumProperty(items = items, update = nodeTreeChanged, default = "X")
+    trackAxis = bpy.props.EnumProperty(items = trackItems, update = nodeTreeChanged, default = "Z")
+    upAxis = bpy.props.EnumProperty(items = upItems, update = nodeTreeChanged, default = "X")
     
     def init(self, context):
         forbidCompiling()
@@ -20,8 +21,17 @@ class mn_DirectionToRotation(Node, AnimationNode):
         allowCompiling()
         
     def draw_buttons(self, context, layout):
-        layout.prop(self, "trackAxis", expand = True)
-        layout.prop(self, "upAxis", expand = True)
+        col = layout.column(align = True)
+
+        row = col.row(align = True)
+        row.label("To:")
+        row.prop(self, "trackAxis", expand = True)
+        
+        col.separator()
+
+        row = col.row(align = True)
+        row.label("Up:")
+        row.prop(self, "upAxis", expand = True)
         
         if self.trackAxis == self.upAxis:
             layout.label("Must be different", icon = "ERROR")
